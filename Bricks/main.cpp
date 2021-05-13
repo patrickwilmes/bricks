@@ -23,10 +23,13 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-#include <iostream>
+#include "Application.h"
+#include <Common.h>
 
 int main()
 {
-    std::cout << "test" << std::endl;
+    Graphics::Types::Size size(800, 600);
+    BricksApplication application(size, "Bricks");
+    application.run();
     return 0;
 }
