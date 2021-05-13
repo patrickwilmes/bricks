@@ -5,6 +5,8 @@ set(SOURCES
         Graphics.h
         Entity.cpp
         Entity.h
+        Texture.cpp
+        Texture.h
         Common.h
         )
 

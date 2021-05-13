@@ -23,45 +23,23 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include "Common.h"
-#include "Entity.h"
-#include "Graphics.h"
-#include "Texture.h"
 #include <SDL2/SDL.h>
-#include <Types.h>
-#include <memory>
 #include <string>
-#include <vector>
 
 namespace Graphics {
-    using namespace Common;
-    class Window {
+    class Texture final {
     public:
-        Window(Graphics::Types::Size size, std::string title);
-        ~Window();
-        void run();
-        void set_clear_color(Graphics::Types::Color color);
-        void set_clear_color(int r, int g, int b, int a);
-        int get_window_width();
-        int get_window_height();
-
-    protected:
-        std::shared_ptr<Texture> create_texture(const std::string& filename, int x, int y);
-        virtual void update() = 0;
+        Texture(const std::string& filename, int x, int y, SDL_Renderer* renderer);
+        void render();
+        void set_x(int x);
+        void set_y(int y);
 
     private:
-        static void init();
-        static SDL_Window* create_window(Graphics::Types::Point position, Graphics::Types::Size size, std::string title);
-        static SDL_Renderer* create_renderer(SDL_Window* window);
-        static Tuple<int> initialize_screen_info();
-        static std::shared_ptr<Painter> initialize_painter(SDL_Renderer* renderer, Graphics::Types::Color clear_color);
+        static SDL_Texture* load_texture(const std::string& filename, SDL_Renderer* renderer);
 
     private:
-        SDL_Window* m_window = nullptr;
-        SDL_Renderer* m_renderer = nullptr;
-        int m_screen_width;
-        int m_screen_height;
-        Graphics::Types::Color m_clear_color = { .r = 0, .g = 0, .b = 0, .a = 0 };
-        std::shared_ptr<Painter> m_painter = nullptr;
-        Graphics::Types::Size m_size;
+        SDL_Texture* m_texture;
+        SDL_Renderer* m_renderer;
+        Graphics::Types::Point m_position;
     };
 }

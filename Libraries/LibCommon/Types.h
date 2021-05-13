@@ -23,8 +23,8 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include <cstdint>
-#include <string>
 #include <iomanip>
+#include <string>
 
 namespace Common {
     typedef uint64_t u64;
@@ -53,10 +53,22 @@ namespace Common {
             , m_second(second)
         {
         }
+
+        void set_first(Type first)
+        {
+            m_first = first;
+        }
+
+        void set_second(Type second)
+        {
+            m_second = second;
+        }
+
         Type get_first()
         {
             return m_first;
         }
+
         Type get_second()
         {
             return m_second;
