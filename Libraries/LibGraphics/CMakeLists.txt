@@ -3,8 +3,10 @@ set(SOURCES
         Window.h
         Graphics.cpp
         Graphics.h
-        Entity.cpp
-        Entity.h
+        Entity/Entity.cpp
+        Entity/Entity.h
+        Entity/TexturedEntity.cpp
+        Entity/TexturedEntity.h
         Texture.cpp
         Texture.h
         Common.h

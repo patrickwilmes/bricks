@@ -32,6 +32,8 @@ namespace Graphics::Types {
         int r, g, b, a;
     } Color;
 
+    static const Color COLOR_WHITE = {.r = 255, .g = 255, .b = 255, .a = 0};
+
     template<typename Type>
     class Rectangle {
     public:

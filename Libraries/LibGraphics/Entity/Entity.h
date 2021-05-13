@@ -21,63 +21,32 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include "Entity.h"
+#pragma once
+#include "Graphics.h"
+#include <memory>
 
-Graphics::Entity::Entity(int x, int y, int width, int height, Graphics::Types::Color color)
-    : m_x(x)
-    , m_y(y)
-    , m_width(width)
-    , m_height(height)
-    , m_color(color)
-{
-}
+namespace Graphics {
+    class Entity {
+    public:
+        Entity(int x, int y, int width, int height, Graphics::Types::Color color);
+        void draw(const std::shared_ptr<Painter>& painter);
+        virtual void draw();
+        virtual void update() = 0;
+        [[nodiscard]] int get_x() const;
+        [[nodiscard]] int get_y() const;
+        [[nodiscard]] int get_width() const;
+        [[nodiscard]] int get_height() const;
+        virtual void set_x(int x);
+        virtual void set_y(int y);
+        void set_width(int width);
+        void set_height(int height);
+        void set_color(Graphics::Types::Color color);
 
-void Graphics::Entity::draw(const std::shared_ptr<Painter>& painter)
-{
-    draw_component(painter);
-}
+    protected:
+        virtual void draw_component(std::shared_ptr<Painter> painter) = 0;
 
-int Graphics::Entity::get_x() const
-{
-    return m_x;
-}
-
-int Graphics::Entity::get_y() const
-{
-    return m_y;
-}
-
-int Graphics::Entity::get_width() const
-{
-    return m_width;
-}
-
-int Graphics::Entity::get_height() const
-{
-    return m_height;
-}
-
-void Graphics::Entity::set_x(int x)
-{
-    m_x = x;
-}
-
-void Graphics::Entity::set_y(int y)
-{
-    m_y = y;
-}
-
-void Graphics::Entity::set_width(int width)
-{
-    m_width = width;
-}
-
-void Graphics::Entity::set_height(int height)
-{
-    m_height = height;
-}
-
-void Graphics::Entity::set_color(Graphics::Types::Color color)
-{
-    m_color = color;
+    protected:
+        int m_x, m_y, m_width, m_height;
+        Graphics::Types::Color m_color;
+    };
 }

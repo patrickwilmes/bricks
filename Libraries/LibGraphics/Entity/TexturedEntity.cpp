@@ -21,30 +21,33 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#pragma once
-#include "Graphics.h"
-#include <memory>
+#include "TexturedEntity.h"
 
-namespace Graphics {
-    class Entity {
-    public:
-        Entity(int x, int y, int width, int height, Graphics::Types::Color color);
-        void draw(const std::shared_ptr<Painter>& painter);
-        virtual void update() = 0;
-        [[nodiscard]] int get_x() const;
-        [[nodiscard]] int get_y() const;
-        [[nodiscard]] int get_width() const;
-        [[nodiscard]] int get_height() const;
-        void set_x(int x);
-        void set_y(int y);
-        void set_width(int width);
-        void set_height(int height);
-        void set_color(Graphics::Types::Color color);
+Graphics::TexturedEntity::TexturedEntity(int x, int y, std::shared_ptr<Texture> texture)
+    : Entity(x, y, 0, 0, Graphics::Types::COLOR_WHITE)
+    , m_texture(std::move(texture))
+{
+}
 
-    protected:
-        virtual void draw_component(std::shared_ptr<Painter> painter) = 0;
-    protected:
-        int m_x, m_y, m_width, m_height;
-        Graphics::Types::Color m_color;
-    };
+void Graphics::TexturedEntity::draw()
+{
+    m_texture->render();
+}
+
+void Graphics::TexturedEntity::set_x(int x)
+{
+    m_texture->set_x(x);
+}
+
+void Graphics::TexturedEntity::set_y(int y)
+{
+    m_texture->set_y(y);
+}
+
+void Graphics::TexturedEntity::update()
+{
+}
+
+void Graphics::TexturedEntity::draw_component(std::shared_ptr<Painter> painter)
+{
 }
