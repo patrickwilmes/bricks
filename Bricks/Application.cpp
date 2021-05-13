@@ -26,8 +26,11 @@
 BricksApplication::BricksApplication(Graphics::Types::Size size, std::string title)
     : Window(size, std::move(title))
 {
+    auto texture = create_texture("Resources/test.bmp", 10, 10);
+    m_test = std::make_unique<Graphics::TexturedEntity>(10, 10, texture);
 }
 
 void BricksApplication::update()
 {
+    m_test->draw();
 }

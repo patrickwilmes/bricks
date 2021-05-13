@@ -22,7 +22,10 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
+#include <Texture.h>
 #include <Window.h>
+#include <Entity/TexturedEntity.h>
+#include <memory>
 
 class BricksApplication : public Graphics::Window {
 public:
@@ -30,4 +33,7 @@ public:
 
 protected:
     void update() override;
+
+private:
+    std::unique_ptr<Graphics::TexturedEntity> m_test = nullptr;
 };
