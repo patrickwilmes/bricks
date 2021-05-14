@@ -202,3 +202,10 @@ void collide_with_brick(ball_t* ball, brick_t* brick)
         }
     }
 }
+
+void render_life_count(renderer_t* ren)
+{
+    char str[10];
+    sprintf(str, "Lives: %d", life_count);
+    renderer_draw_text(ren, str, 10, 10, COLOR_WHITE);
+}
