@@ -22,11 +22,15 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "renderer.h"
+#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 
 #define WINDOW_POS(screen_dimension, window_dimension) (screen_dimension / 2) - (window_dimension / 2)
 #define DISPLAY_INDEX 0
 #define RENDERER_INDEX -1
+#define FONT_SIZE 12
+
+SDL_Color convert_to_sdl_color(color_t color);
 
 renderer_t* renderer_create(const char* title, int width, int height)
 {
@@ -50,6 +54,11 @@ renderer_t* renderer_create(const char* title, int width, int height)
     SDL_Renderer* renderer = SDL_CreateRenderer(window, RENDERER_INDEX, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == NULL) {
         fprintf(stderr, "Failed to create SDL renderer!\n");
+        return NULL;
+    }
+
+    if (TTF_Init() != 0) {
+        fprintf(stderr, "Failed to initialize TTF!\n");
         return NULL;
     }
 
@@ -79,12 +88,49 @@ void renderer_draw_rect(renderer_t* ren, int x, int y, int width, int height, co
     SDL_SetRenderDrawColor(ren->renderer, old_r, old_g, old_b, old_a);
 }
 
-void renderer_clear(renderer_t *ren, color_t clear_color) {
+void renderer_clear(renderer_t* ren, color_t clear_color)
+{
     SDL_SetRenderDrawColor(ren->renderer, clear_color.r, clear_color.g, clear_color.b, clear_color.a);
     SDL_RenderClear(ren->renderer);
-
 }
 
-void renderer_present(renderer_t *ren) {
+void renderer_present(renderer_t* ren)
+{
     SDL_RenderPresent(ren->renderer);
+}
+
+void renderer_draw_text(renderer_t* ren, const char* text, int x, int y, color_t color)
+{
+    TTF_Font* font = TTF_OpenFont("Resources/roboto.ttf", FONT_SIZE);
+    if (font == NULL) {
+        fprintf(stderr, "Failed to open font file! %s\n", SDL_GetError());
+        return;
+    }
+    SDL_Color sdl_color = convert_to_sdl_color(color);
+    SDL_Surface* surface = TTF_RenderText_Blended(font, text, sdl_color);
+    if (surface == NULL) {
+        TTF_CloseFont(font);
+        fprintf(stderr, "Failed to create surface for font! %s\n", SDL_GetError());
+        return;
+    }
+
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(ren->renderer, surface);
+    if (tex == NULL) {
+        SDL_FreeSurface(surface);
+        fprintf(stderr, "Failed to create texture from surface! %s\n", SDL_GetError());
+        return;
+    }
+    SDL_FreeSurface(surface);
+    TTF_CloseFont(font);
+    SDL_Rect dst;
+    dst.x = x;
+    dst.y = y;
+    SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
+    SDL_RenderCopy(ren->renderer, tex, NULL, &dst);
+}
+
+SDL_Color convert_to_sdl_color(color_t color)
+{
+    SDL_Color sdl_color = { .r = color.r, .g = color.g, .b = color.b, .a = color.a };
+    return sdl_color;
 }

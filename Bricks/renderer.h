@@ -37,6 +37,7 @@ renderer_t * renderer_create(const char *title, int width, int height);
 void renderer_destroy(renderer_t *renderer);
 
 void renderer_draw_rect(renderer_t *ren, int x, int y, int width, int height, color_t color);
+void renderer_draw_text(renderer_t *ren, const char *text, int x, int y, color_t color);
 void renderer_clear(renderer_t *ren, color_t clear_color);
 void renderer_present(renderer_t *ren);
 
