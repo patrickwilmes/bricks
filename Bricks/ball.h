@@ -21,19 +21,21 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#pragma once
-#include <Texture.h>
-#include <Window.h>
-#include <Entity/TexturedEntity.h>
-#include <memory>
+#ifndef BRICKS_BALL_H
+#define BRICKS_BALL_H
 
-class BricksApplication : public Graphics::Window {
-public:
-    BricksApplication(Graphics::Types::Size size, std::string title);
+#include "types.h"
 
-protected:
-    void update() override;
+typedef struct ball {
+    int x, y;
+    int width, height;
+    color_t color;
+    int window_height, window_width;
+    int x_direction, y_direction;
+} ball_t;
 
-private:
-    std::unique_ptr<Graphics::TexturedEntity> m_test = nullptr;
-};
+ball_t *ball_create(int x, int y, int width, int height, int window_width, int window_height, color_t color);
+void ball_move(ball_t *ball, int amount);
+void ball_destroy(ball_t *ball);
+
+#endif //BRICKS_BALL_H

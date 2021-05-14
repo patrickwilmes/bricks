@@ -21,4 +21,23 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include "Types.h"
+#ifndef BRICKS_PADDLE_H
+#define BRICKS_PADDLE_H
+
+#include "types.h"
+
+typedef struct paddle {
+    int x, y;
+    int width, height;
+    color_t color;
+    int window_width;
+} paddle_t;
+
+paddle_t * paddle_create(int x, int y, int width, int height, int window_width, color_t color);
+void paddle_destroy(paddle_t *paddle);
+
+void paddle_move_left(paddle_t *paddle, int amount);
+
+void paddle_move_right(paddle_t *paddle, int amount);
+
+#endif //BRICKS_PADDLE_H

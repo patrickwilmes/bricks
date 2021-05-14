@@ -21,16 +21,17 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include "Application.h"
+#ifndef BRICKS_TYPES_H
+#define BRICKS_TYPES_H
 
-BricksApplication::BricksApplication(Graphics::Types::Size size, std::string title)
-    : Window(size, std::move(title))
-{
-    auto texture = create_texture("Resources/test.bmp", 10, 10);
-    m_test = std::make_unique<Graphics::TexturedEntity>(10, 10, texture);
-}
+#define TRUE 1
+#define FALSE 0
 
-void BricksApplication::update()
-{
-    m_test->draw();
-}
+typedef struct color {
+    int r, g, b, a;
+} color_t;
+
+static const color_t COLOR_WHITE = {.r = 255, .g = 255, .b = 255, .a = 0};
+static const color_t COLOR_BLACK = {.r = 0, .g = 0, .b = 0, .a = 0};
+
+#endif //BRICKS_TYPES_H

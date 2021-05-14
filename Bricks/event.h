@@ -21,4 +21,23 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include "Print.h"
+#ifndef BRICKS_EVENT_H
+#define BRICKS_EVENT_H
+
+enum key {
+    LEFT, RIGHT
+};
+
+enum event_kind {
+    QUIT, KEY, NONE
+};
+
+typedef struct event {
+    enum key key;
+    enum event_kind kind;
+} event_t;
+
+event_t* event_poll();
+void event_destroy(event_t *event);
+
+#endif //BRICKS_EVENT_H

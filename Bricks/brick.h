@@ -21,32 +21,19 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#pragma once
-#include "Graphics.h"
-#include <memory>
+#ifndef BRICKS_BRICK_H
+#define BRICKS_BRICK_H
 
-namespace Graphics {
-    class Entity {
-    public:
-        Entity(int x, int y, int width, int height, Graphics::Types::Color color);
-        void draw(const std::shared_ptr<Painter>& painter);
-        virtual void draw();
-        virtual void update() = 0;
-        [[nodiscard]] int get_x() const;
-        [[nodiscard]] int get_y() const;
-        [[nodiscard]] int get_width() const;
-        [[nodiscard]] int get_height() const;
-        virtual void set_x(int x);
-        virtual void set_y(int y);
-        void set_width(int width);
-        void set_height(int height);
-        void set_color(Graphics::Types::Color color);
+#include "types.h"
 
-    protected:
-        virtual void draw_component(std::shared_ptr<Painter> painter) = 0;
+typedef struct brick {
+    int x, y;
+    int width, height;
+    int life_count;
+    color_t color;
+} brick_t;
 
-    protected:
-        int m_x, m_y, m_width, m_height;
-        Graphics::Types::Color m_color;
-    };
-}
+brick_t * brick_create(int x, int y, int width, int height, int life_count, color_t color);
+void brick_destroy(brick_t *brick);
+
+#endif //BRICKS_BRICK_H

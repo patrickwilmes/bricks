@@ -21,33 +21,38 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include "TexturedEntity.h"
+#include "paddle.h"
+#include <malloc.h>
+#include <stddef.h>
 
-Graphics::TexturedEntity::TexturedEntity(int x, int y, std::shared_ptr<Texture> texture)
-    : Entity(x, y, 0, 0, Graphics::Types::COLOR_WHITE)
-    , m_texture(std::move(texture))
+paddle_t* paddle_create(int x, int y, int width, int height, int window_width, color_t color)
 {
+    paddle_t* p = malloc(sizeof(paddle_t));
+    p->x = x;
+    p->y = y;
+    p->width = width;
+    p->height = height;
+    p->window_width = window_width;
+    p->color = color;
+    return p;
 }
 
-void Graphics::TexturedEntity::draw()
+void paddle_destroy(paddle_t* paddle)
 {
-    m_texture->render();
+    if (paddle == NULL) {
+        return;
+    }
+    free(paddle);
 }
 
-void Graphics::TexturedEntity::set_x(int x)
+void paddle_move_left(paddle_t* paddle, int amount)
 {
-    m_texture->set_x(x);
+    if (paddle->x >= 0)
+        paddle->x -= amount;
 }
 
-void Graphics::TexturedEntity::set_y(int y)
+void paddle_move_right(paddle_t* paddle, int amount)
 {
-    m_texture->set_y(y);
-}
-
-void Graphics::TexturedEntity::update()
-{
-}
-
-void Graphics::TexturedEntity::draw_component(std::shared_ptr<Painter> painter)
-{
+    if (paddle->x + paddle->width < paddle->window_width)
+        paddle->x += amount;
 }

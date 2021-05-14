@@ -21,35 +21,25 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include "Graphics.h"
+#include "brick.h"
+#include <stddef.h>
+#include <malloc.h>
 
-Graphics::Painter::Painter(SDL_Renderer* renderer, Graphics::Types::Color clear_color)
-    : m_clear_color(clear_color)
-    , m_renderer(renderer)
+brick_t* brick_create(int x, int y, int width, int height, int life_count, color_t color)
 {
+    brick_t *brick = malloc(sizeof(brick_t));
+    brick->x = x;
+    brick->y = y;
+    brick->width = width;
+    brick->height = height;
+    brick->life_count = life_count;
+    brick->color = color;
+    return brick;
 }
 
-void Graphics::Painter::draw_rect(Graphics::Types::Rectangle<int>& rect, bool fill)
+void brick_destroy(brick_t* brick)
 {
-    SDL_Rect sdl_rect = {
-        .x = rect.get_x(),
-        .y = rect.get_y(),
-        .w = rect.get_width(),
-        .h = rect.get_height()
-    };
-    SDL_SetRenderDrawColor(m_renderer, rect.get_r(), rect.get_g(), rect.get_b(), rect.get_a());
-    if (fill)
-        SDL_RenderFillRect(m_renderer, &sdl_rect);
-    else
-        SDL_RenderDrawRect(m_renderer, &sdl_rect);
-}
-
-void Graphics::Painter::reset_draw_color()
-{
-    SDL_SetRenderDrawColor(m_renderer, m_clear_color.r, m_clear_color.g, m_clear_color.b, m_clear_color.a);
-}
-
-void Graphics::Painter::draw_square(Graphics::Types::Square<int>& rect, bool fill)
-{
-    draw_rect(rect, fill);
+    if (brick == NULL)
+        return;
+    free(brick);
 }

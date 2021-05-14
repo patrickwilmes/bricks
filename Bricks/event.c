@@ -21,20 +21,35 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#pragma once
-#include "Common.h"
+#include "event.h"
 #include <SDL2/SDL.h>
 
-namespace Graphics {
-    class Painter final {
-    public:
-        Painter(SDL_Renderer *renderer, Graphics::Types::Color clear_color);
-        void draw_rect(Graphics::Types::Rectangle<int>& rect, bool fill = false);
-        void draw_square(Graphics::Types::Square<int>& rect, bool fill = false);
-    private:
-        void reset_draw_color();
-    private:
-        Graphics::Types::Color m_clear_color;
-        SDL_Renderer *m_renderer;
-    };
+event_t* event_poll()
+{
+    SDL_Event sdl_event;
+    event_t* event = malloc(sizeof(event_t));
+    event->kind = NONE;
+    while (SDL_PollEvent(&sdl_event)) {
+        if (sdl_event.type == SDL_QUIT) {
+            event->kind = QUIT;
+        } else if (sdl_event.type == SDL_KEYDOWN) {
+            event->kind = KEY;
+            if (sdl_event.key.keysym.scancode == SDL_SCANCODE_LEFT) {
+                event->key = LEFT;
+            } else if (sdl_event.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
+                event->key = RIGHT;
+            } else {
+                event->kind = NONE;
+            }
+        }
+    }
+    return event;
+}
+
+void event_destroy(event_t* event)
+{
+    if (event == NULL) {
+        return;
+    }
+    free(event);
 }
