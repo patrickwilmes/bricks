@@ -34,10 +34,22 @@
 #define WINDOW_HEIGHT 600
 #define WINDOW_TITLE "Bricks"
 
-#define MOV_AMOUNT 5
+const int PADDLE_MOV_AMOUNT = 10;
+const int PADDLE_WIDTH = 100;
+const int PADDLE_HEIGHT = 20;
+const int PADDLE_START_X = WINDOW_WIDTH / 2 - PADDLE_WIDTH / 2;
+const int PADDLE_START_Y = WINDOW_HEIGHT - 30;
 
-#define BRICK_WIDTH 40
-#define BRICK_HEIGHT 10
+const int BRICK_WIDTH = 40;
+const int BRICK_HEIGHT = 10;
+const int BRICK_SPAWN_X = 10;
+const int BRICK_SPAWN_Y = 50;
+const int BRICK_LIFE_COUNT = 2;
+
+const int BALL_MOV_AMOUNT = 5;
+const int BALL_WIDTH = 10;
+const int BALL_START_X = WINDOW_WIDTH / 2 - BALL_WIDTH / 2;
+const int BALL_START_Y = WINDOW_HEIGHT / 2 - BALL_WIDTH / 2;
 
 int life_count = 10;
 
@@ -45,6 +57,7 @@ const color_t COLOR_BRICK = { .r = 255, .g = 0, .b = 0, .a = 0 };
 const color_t COLOR_BRICK_WEAK = { .r = 155, .g = 0, .b = 0, .a = 0 };
 
 void (*paddle_mov[2])(paddle_t*, int) = { paddle_move_left, paddle_move_right };
+
 brick_t* bricks[20];
 
 void collide_with_bricks(ball_t* ball);
@@ -52,15 +65,17 @@ void collide_with_brick(ball_t* ball, brick_t* brick);
 void create_bricks();
 void draw_bricks(renderer_t* ren);
 void destroy_bricks();
+
 void collide_with_paddle(paddle_t* paddle, ball_t* ball);
 void check_loose_life(ball_t* ball);
-int has_lost();
+int has_lost(int);
+void render_life_count(renderer_t* ren);
 
-int main()
+int main(int argc, char **argv)
 {
     renderer_t* ren = renderer_create(WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT);
-    paddle_t* paddle = paddle_create(WINDOW_WIDTH / 2 - 50, WINDOW_HEIGHT - 30, 100, 20, WINDOW_WIDTH, COLOR_WHITE);
-    ball_t* ball = ball_create(395, 295, 10, 10, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_WHITE);
+    paddle_t* paddle = paddle_create(PADDLE_START_X, PADDLE_START_Y, PADDLE_WIDTH, PADDLE_HEIGHT, WINDOW_WIDTH, COLOR_WHITE);
+    ball_t* ball = ball_create(BALL_START_X, BALL_START_Y, BALL_WIDTH, BALL_WIDTH, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_WHITE);
 
     create_bricks();
 
@@ -71,23 +86,26 @@ int main()
             quit = TRUE;
         }
         if (event->kind == KEY) {
-            (*paddle_mov[event->key])(paddle, MOV_AMOUNT);
+            (*paddle_mov[event->key])(paddle, PADDLE_MOV_AMOUNT);
         }
         event_destroy(event);
 
         collide_with_bricks(ball);
-        ball_move(ball, MOV_AMOUNT);
+        ball_move(ball, BALL_MOV_AMOUNT);
         collide_with_paddle(paddle, ball);
         check_loose_life(ball);
 
-        if (has_lost()) {
+        if (has_lost(life_count)) {
             quit = TRUE;
         }
 
         renderer_clear(ren, COLOR_BLACK);
+
+        render_life_count(ren);
         renderer_draw_rect(ren, paddle->x, paddle->y, paddle->width, paddle->height, paddle->color);
         renderer_draw_rect(ren, ball->x, ball->y, ball->width, ball->height, ball->color);
         draw_bricks(ren);
+
         renderer_present(ren);
     }
     destroy_bricks();
@@ -110,22 +128,22 @@ void check_loose_life(ball_t* ball)
 {
     if (ball->y + ball->height > WINDOW_HEIGHT) {
         life_count--;
-        ball->x = 395;
-        ball->y = 295;
+        ball->x = BALL_START_X;
+        ball->y = BALL_START_Y;
         ball->y_direction = -1;
     }
 }
 
-int has_lost()
+int has_lost(int lc)
 {
-    return life_count == 0;
+    return lc == 0;
 }
 
 void create_bricks()
 {
-    int current_x = 10, current_y = 10;
+    int current_x = BRICK_SPAWN_X, current_y = BRICK_SPAWN_Y;
     for (size_t i = 0; i < 20; i++) {
-        brick_t* b = brick_create(current_x, current_y, BRICK_WIDTH, BRICK_HEIGHT, 2, COLOR_BRICK);
+        brick_t* b = brick_create(current_x, current_y, BRICK_WIDTH, BRICK_HEIGHT, BRICK_LIFE_COUNT, COLOR_BRICK);
         bricks[i] = b;
         current_x += BRICK_WIDTH + 10;
         if (current_x + BRICK_WIDTH > WINDOW_WIDTH) {
@@ -173,8 +191,12 @@ void collide_with_bricks(ball_t* ball)
 void collide_with_brick(ball_t* ball, brick_t* brick)
 {
     if (ball->x >= brick->x && ball->x < brick->x + brick->width) {
-        if (ball->y < brick->y + brick->height) {
+        if (ball->y < brick->y + brick->height && ball->y > brick->y) {
             ball->y_direction = 1;
+            brick->color = COLOR_BRICK_WEAK;
+            brick->life_count--;
+        } else if (ball->y < brick->y + brick->height && ball->y >= brick->y) {
+            ball->y_direction = -1;
             brick->color = COLOR_BRICK_WEAK;
             brick->life_count--;
         }

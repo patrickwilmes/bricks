@@ -69,9 +69,9 @@ void renderer_destroy(renderer_t* renderer)
     free(renderer);
 }
 
-void renderer_draw_rect(renderer_t *ren, int x, int y, int width, int height, color_t color)
+void renderer_draw_rect(renderer_t* ren, int x, int y, int width, int height, color_t color)
 {
-    SDL_Rect rect = { .x = x, .y = y, .w = width, .h = height};
+    SDL_Rect rect = { .x = x, .y = y, .w = width, .h = height };
     unsigned char old_r, old_g, old_b, old_a;
     SDL_GetRenderDrawColor(ren->renderer, &old_r, &old_g, &old_b, &old_a);
     SDL_SetRenderDrawColor(ren->renderer, color.r, color.g, color.b, color.a);
