@@ -10,6 +10,8 @@ set(SOURCES
         ball.h
         brick.c
         brick.h
+        level.c
+        level.h
         main.c
         )
 

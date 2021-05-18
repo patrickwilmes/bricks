@@ -26,6 +26,7 @@
 #include "ball.h"
 #include "brick.h"
 #include "event.h"
+#include "level.h"
 #include "paddle.h"
 #include "renderer.h"
 #include "types.h"
@@ -40,12 +41,6 @@ const int PADDLE_HEIGHT = 20;
 const int PADDLE_START_X = WINDOW_WIDTH / 2 - PADDLE_WIDTH / 2;
 const int PADDLE_START_Y = WINDOW_HEIGHT - 30;
 
-const int BRICK_WIDTH = 40;
-const int BRICK_HEIGHT = 10;
-const int BRICK_SPAWN_X = 10;
-const int BRICK_SPAWN_Y = 50;
-const int BRICK_LIFE_COUNT = 2;
-
 const int BALL_MOV_AMOUNT = 5;
 const int BALL_WIDTH = 10;
 const int BALL_START_X = WINDOW_WIDTH / 2 - BALL_WIDTH / 2;
@@ -58,26 +53,33 @@ const color_t COLOR_BRICK_WEAK = { .r = 155, .g = 0, .b = 0, .a = 0 };
 
 void (*paddle_mov[2])(paddle_t*, int) = { paddle_move_left, paddle_move_right };
 
-brick_t* bricks[20];
-
 void collide_with_bricks(ball_t* ball);
 void collide_with_brick(ball_t* ball, brick_t* brick);
-void create_bricks();
 void draw_bricks(renderer_t* ren);
-void destroy_bricks();
 
 void collide_with_paddle(paddle_t* paddle, ball_t* ball);
 void check_loose_life(ball_t* ball);
 int has_lost(int);
 void render_life_count(renderer_t* ren);
 
-int main(int argc, char **argv)
+level_t* level;
+
+int main(int argc, char** argv)
 {
+    if (argc != 2) {
+        printf("Usage: ./bricks <LEVEL_FILE>\n");
+        return -1;
+    }
+    const char* filename = argv[1];
+    level = level_create(filename);
+    if (level == NULL) {
+        printf("what?!\n");
+        return -1;
+    }
     renderer_t* ren = renderer_create(WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT);
     paddle_t* paddle = paddle_create(PADDLE_START_X, PADDLE_START_Y, PADDLE_WIDTH, PADDLE_HEIGHT, WINDOW_WIDTH, COLOR_WHITE);
     ball_t* ball = ball_create(BALL_START_X, BALL_START_Y, BALL_WIDTH, BALL_WIDTH, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_WHITE);
-
-    create_bricks();
+    printf("%d\n", level->brick_count);
 
     short quit = FALSE;
     while (!quit) {
@@ -108,7 +110,7 @@ int main(int argc, char **argv)
 
         renderer_present(ren);
     }
-    destroy_bricks();
+    level_destroy(level);
     paddle_destroy(paddle);
     ball_destroy(ball);
     renderer_destroy(ren);
@@ -139,50 +141,25 @@ int has_lost(int lc)
     return lc == 0;
 }
 
-void create_bricks()
-{
-    int current_x = BRICK_SPAWN_X, current_y = BRICK_SPAWN_Y;
-    for (size_t i = 0; i < 20; i++) {
-        brick_t* b = brick_create(current_x, current_y, BRICK_WIDTH, BRICK_HEIGHT, BRICK_LIFE_COUNT, COLOR_BRICK);
-        bricks[i] = b;
-        current_x += BRICK_WIDTH + 10;
-        if (current_x + BRICK_WIDTH > WINDOW_WIDTH) {
-            current_x = 10;
-            current_y += BRICK_HEIGHT + 10;
-        }
-    }
-}
-
 void draw_bricks(renderer_t* ren)
 {
-    for (size_t i = 0; i < 20; i++) {
-        if (bricks[i] != NULL) {
-            brick_t* b = bricks[i];
+    for (size_t i = 0; i < level->brick_count; i++) {
+        if (level->bricks[i] != NULL) {
+            brick_t* b = level->bricks[i];
             renderer_draw_rect(ren, b->x, b->y, b->width, b->height, b->color);
-        }
-    }
-}
-
-void destroy_bricks()
-{
-    for (size_t i = 0; i < 20; i++) {
-        if (bricks[i] != NULL) {
-            brick_t* b = bricks[i];
-            brick_destroy(b);
-            bricks[i] = NULL;
         }
     }
 }
 
 void collide_with_bricks(ball_t* ball)
 {
-    for (size_t i = 0; i < 20; i++) {
-        if (bricks[i] != NULL) {
-            brick_t* b = bricks[i];
+    for (size_t i = 0; i < level->brick_count; i++) {
+        if (level->bricks[i] != NULL) {
+            brick_t* b = level->bricks[i];
             collide_with_brick(ball, b);
             if (b->life_count == 0) {
                 brick_destroy(b);
-                bricks[i] = NULL;
+                level->bricks[i] = NULL;
             }
         }
     }

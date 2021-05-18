@@ -33,7 +33,7 @@ typedef struct brick {
     color_t color;
 } brick_t;
 
-brick_t * brick_create(int x, int y, int width, int height, int life_count, color_t color);
+brick_t *brick_create(int x, int y, int width, int height, int life_count, color_t color);
 void brick_destroy(brick_t *brick);
 
 #endif //BRICKS_BRICK_H

@@ -25,7 +25,7 @@
 #include <stddef.h>
 #include <malloc.h>
 
-brick_t* brick_create(int x, int y, int width, int height, int life_count, color_t color)
+brick_t *brick_create(int x, int y, int width, int height, int life_count, color_t color)
 {
     brick_t *brick = malloc(sizeof(brick_t));
     brick->x = x;
@@ -37,7 +37,7 @@ brick_t* brick_create(int x, int y, int width, int height, int life_count, color
     return brick;
 }
 
-void brick_destroy(brick_t* brick)
+void brick_destroy(brick_t *brick)
 {
     if (brick == NULL)
         return;
