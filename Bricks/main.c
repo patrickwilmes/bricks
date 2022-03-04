@@ -66,12 +66,12 @@ level_t* level;
 
 int main(int argc, char** argv)
 {
-    if (argc != 2) {
-        printf("Usage: ./bricks <LEVEL_FILE>\n");
-        return -1;
+    if (argc == 1) {
+        level = level_create_random_level(WINDOW_WIDTH, WINDOW_HEIGHT);
+    } else {
+        const char* filename = argv[1];
+        level = level_create(filename);
     }
-    const char* filename = argv[1];
-    level = level_create(filename);
     if (level == NULL) {
         printf("what?!\n");
         return -1;

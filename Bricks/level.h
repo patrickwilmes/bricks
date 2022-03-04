@@ -33,6 +33,7 @@ typedef struct level {
 } level_t;
 
 level_t *level_create(const char *level_filename);
+level_t *level_create_random_level(int window_width, int window_height);
 void level_destroy(level_t *level);
 
 #endif

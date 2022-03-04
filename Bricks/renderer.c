@@ -34,7 +34,7 @@ SDL_Color convert_to_sdl_color(color_t color);
 
 renderer_t* renderer_create(const char* title, int width, int height)
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         fprintf(stderr, "Failed to initialize SDL!\n");
         return NULL;
     }

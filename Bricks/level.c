@@ -24,20 +24,20 @@
 #include "level.h"
 #include "brick.h"
 #include "types.h"
-#include <stdio.h>
 #include <malloc.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 const int BRICK_WIDTH = 40;
 const int BRICK_HEIGHT = 10;
 
-level_t *level_create(const char *level_filename)
+level_t* level_create(const char* level_filename)
 {
-    level_t *level = calloc(sizeof(level_t), 20);
+    level_t* level = calloc(sizeof(level_t), 20);
     level->bricks = calloc(sizeof(brick_t), 500);
-    FILE *file;
-    char *line = NULL;
+    FILE* file;
+    char* line = NULL;
     size_t len = 0;
     ssize_t read;
     file = fopen(level_filename, "r");
@@ -54,7 +54,7 @@ level_t *level_create(const char *level_filename)
             if (line[i] == ';') {
                 char temp[i - start + 1];
                 strncpy(temp, line + start, i - start);
-                temp[i-start] = '\0';
+                temp[i - start] = '\0';
                 switch (separator_count) {
                 case 0:
                     x = atoi(temp);
@@ -78,7 +78,31 @@ level_t *level_create(const char *level_filename)
     return level;
 }
 
-void level_destroy(level_t *level) 
+level_t* level_create_random_level(int window_width, int window_height)
+{
+    const int DEFAULT_X_DISTANCE = 10;
+    const int DEFAULT_Y_DISTANCE = 10;
+    level_t* level = calloc(sizeof(level_t), 20);
+    level->bricks = calloc(sizeof(brick_t), 500);
+    // start with an offset to not have bricks directly at the window border
+    int x = 10;
+    int y = 50;
+    for (size_t i = 0; i < 500; ++i) { // 500 bricks
+        level->bricks[i] = brick_create(x, y, BRICK_WIDTH, BRICK_HEIGHT, 2, COLOR_WHITE);
+        level->brick_count++;
+        x += BRICK_WIDTH + DEFAULT_X_DISTANCE;
+        if (x + BRICK_WIDTH > window_width) { // start a new line of bricks
+            x = 10;
+            y += BRICK_HEIGHT + DEFAULT_Y_DISTANCE;
+        }
+        if (y + BRICK_HEIGHT > window_height / 2) {
+            break;
+        }
+    }
+    return  level;
+}
+
+void level_destroy(level_t* level)
 {
     if (level == NULL) {
         return;
