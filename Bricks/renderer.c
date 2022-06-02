@@ -45,7 +45,8 @@ renderer_t* renderer_create(const char* title, int width, int height)
     int x = WINDOW_POS(dm.w, width);
     int y = WINDOW_POS(dm.h, height);
 
-    SDL_Window* window = SDL_CreateWindow(title, x, y, width, height, SDL_WINDOW_SHOWN);
+
+    SDL_Window* window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED_DISPLAY(0), y, width, height, SDL_WINDOW_SHOWN);
     if (window == NULL) {
         fprintf(stderr, "Failed to create SDL window!\n");
         return NULL;
